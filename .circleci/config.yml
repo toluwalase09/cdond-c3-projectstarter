@@ -109,12 +109,12 @@ jobs:
       - restore_cache:
           keys: [frontend-analysis]
       - run:
-        name: frontend analysis
-        command: |
-          cd frontend
-          npm install
-          # npm install oauth-sign@^0.9.0
-          npm audit --audit-level=critical
+          name: frontend analysis
+          command: |
+            cd frontend
+            npm install
+            # npm install oauth-sign@^0.9.0
+            npm audit --audit-level=critical
       - save_cache:
           paths: [backend/node_modules]
           key: frontend-analysis
@@ -127,12 +127,12 @@ jobs:
       - restore_cache:
           keys: [backend-analysis]
       - run:
-        name: back-end analysis
-        command: |
-          cd backend
-          npm install
-          # npm install oauth-sign@^0.9.0
-          npm audit --audit-level=critical
+          name: back-end analysis
+          command: |
+            cd backend
+            npm install
+            # npm install oauth-sign@^0.9.0
+            npm audit --audit-level=critical
       - save_cache:
           paths: [backend/node_modules]
           key: backend-analysis
