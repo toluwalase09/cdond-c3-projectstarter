@@ -5,10 +5,10 @@ orbs:
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-    parameters:
-      EnvironmentName:
-        Description: An environment name that will be prefixed to resource names
-        Type: String  
+    # parameters:
+    #   EnvironmentName:
+    #     Description: An environment name that will be prefixed to resource names
+    #     Type: String  
     steps:
       - run:
           name: Destroy environments
