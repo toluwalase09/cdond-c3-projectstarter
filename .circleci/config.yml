@@ -5,25 +5,17 @@ orbs:
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-    # parameters:
-    #   EnvironmentName:
-    #     Description: An environment name that will be prefixed to resource names
-    #     Type: String  
+    parameters:
+      workflow_id:
+        type: string
+        default: "${CIRCLE_WORKFLOW_ID}"
     steps:
       - run:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack \
-              --template-file .circleci/files/backend.yml \
-              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
-              --tags project=udapeople
-            aws cloudformation delete-stack\
-            --template-file .circleci/files/backend.yml \
-            --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-            --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
-            --tags project=udapeople
+            aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
 
 
 #   revert-migrations:
@@ -185,41 +177,46 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            aws ec2 describe-instances \
-              \
+             backend_ec2_public_ip=$(aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Project,Values=udapeople" \
-              --output text >> .circleci/ansible/inventory.txt
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --output text) 
+              echo "[web]" >> .circleci/ansible/inventory.txt
+              echo "$backend_ec2_public_ip" >> .circleci/ansible/inventory.txt
+              #echo -e '[web]\n$backend_ec2_public_ip' > .circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - destroy-environment
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}  
 
   configure-infrastructure:
     docker:
      - image: python:3.7-alpine3.11
     steps:
+      - run: apk add --update tar
+      - run: apk add --update gzip
       - checkout
       - add_ssh_keys:
           fingerprints: ["0c:f2:9e:c8:e1:4f:07:82:1c:79:76:e9:13:53:92:bf"]
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/.circleci/ansible/inventory.txt
+      - attach_workspace:
+          at: ~/
       - run:
           name: Install dependencies
           command: |
 
             apk add --update ansible
             pip install awscli
+            aws --version
             
       - run:
           name: Configure server
           command: | 
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
-      - destroy-environment    
+      - destroy-environment: 
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}   
 
   # run-migrations:
   #   docker:
