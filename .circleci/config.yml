@@ -212,7 +212,7 @@ jobs:
           command: |
             apk add --update ansible
             pip install awscli
-            pip install tar gzip
+            
       - run:
           name: Configure server
           command: | 
