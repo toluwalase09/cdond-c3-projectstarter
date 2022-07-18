@@ -250,6 +250,8 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update --no-cache tar gzip nodejs npm ansible aws-cli
+      - restore_cache:
+          keys: [frontend-build]
       - run:
           name: Get backend url
           command: |
@@ -261,8 +263,6 @@ jobs:
             echo "API_URL = ${API_URL}"
             echo "API_URL=http://${BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
-      - restore_cache:
-          keys: [frontend-build]
       - run:
           name: Deploy frontend objects
           command: |
@@ -283,11 +283,11 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "0c:f2:9e:c8:e1:4f:07:82:1c:79:76:e9:13:53:92:bf"
+            - '0c:f2:9e:c8:e1:4f:07:82:1c:79:76:e9:13:53:92:bf'
       - run:
           name: Install dependencies
           command: |
-            apk add --update --no-cache tar gzip nodejs npm tree aws-cli ansible curl rsync openssh
+            apk add --update --no-cache tar gzip nodejs npm aws-cli ansible
       - attach_workspace:
           at: ~/
       - restore_cache:
@@ -304,9 +304,8 @@ jobs:
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
             mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
             cd .circleci/ansible
-            echo "Contents  of the inventory.txt file is -------)"
-            cat inventory.txt
-            ansible-playbook -i inventory.txt deploy-backend.yml -vvv
+            echo "Contents  of the inventory.txt file is -------$(cat inventory.txt)"
+            ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
