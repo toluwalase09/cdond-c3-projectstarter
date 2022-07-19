@@ -334,7 +334,7 @@ jobs:
 
   smoke-test:
     docker:
-      - image: python:3.10-alpine3.16 
+      - image: python:3.7-alpine3.16 
     steps:
       - checkout
       - run:
@@ -349,9 +349,9 @@ jobs:
             --filters Name=tag:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
             --output text) 
             export API_URL="http://${BACKEND_IP}:3030"
-            echo $API_URL
-            # if curl -s http://google.com
-            if curl -s "${API_URL}/api/status" | grep "ok"
+            echo "${API_URL}"
+            # if curl -s "${API_URL}/api/status" | grep "ok"
+            if curl -s http://google.com
             then
                 return 0
             else
