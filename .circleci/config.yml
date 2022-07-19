@@ -305,19 +305,20 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - '0c:f2:9e:c8:e1:4f:07:82:1c:79:76:e9:13:53:92:bf'
+      - attach_workspace:
+          at: ~/
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Install dependencies
           command: |
-            apk add --update --no-cache tar gzip nodejs npm aws-cli ansible
-      - restore_cache:
-          keys: [backend-build]
-      - attach_workspace:
-          at: ~/
+            apk add --update --no-cache tar gzip nodejs npm tree aws-cli ansible curl rsync openssh
+      
       - run:
           name: Deploy backend
           command: |
             cd backend
-            npm install
+            npm i
             npm run build
             cd ..
             # Zip the directory
@@ -325,8 +326,9 @@ jobs:
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
             mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
             cd .circleci/ansible
-            echo "Contents  of the inventory.txt file is -------$(cat inventory.txt)"
-            ansible-playbook -i inventory.txt deploy-backend.yml
+            echo "Contents  of the inventory.txt file is -------"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml -vvv
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
