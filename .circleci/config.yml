@@ -5,7 +5,7 @@ version: 2.1
 parameters:
   workflow_id:
     type: string
-    Default: "${CIRCLE_WORKFLOW_ID}"
+    default: "${CIRCLE_WORKFLOW_ID}"
 
 commands:
   destroy-environment:
@@ -370,7 +370,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum install -y npm nodejs
+            yum install tar-gzip -y npm nodejs --enablerepo=epel
       - run:
           name: Update cloudfront distribution
           command: |
