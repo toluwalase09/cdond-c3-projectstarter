@@ -1,39 +1,37 @@
 ---
-- name: "update apt packages."
-  become: yes
-  apt:
-    upgrade: yes
-    update_cache: yes
-    cache_valid_time: 86400
+  - name: "update apt packages."
+    become: yes
+    apt:
+      update_cache: yes
 
-- name: "remove dependencies that are no longer required"
-  become: yes
-  apt:
-    autoremove: yes
+  - name: "remove dependencies that are no longer required"
+    become: yes
+    apt:
+      autoremove: yes
 
-- name: "install nodejs and npm"
-  become: yes
-  apt:
-    name: ["nodejs", "npm"]
-    state: latest
-    update_cache: yes
+  - name: "install nodejs and npm"
+    become: yes
+    apt:
+      name: ["nodejs", "npm"]
+      state: latest
+      update_cache: yes
 
-- name: install pm2
-  become: yes
-  npm:
-    name: pm2
-    global: yes
-    state: latest
-    production: yes
+  - name: install pm2
+    become: yes
+    npm:
+      name: pm2
+      global: yes
+      state: latest
+      production: yes
 
-- name: extract artifact
-  become: yes
-  unarchive:
-    src: files/artifact.tar.gz
-    dest: .
+  - name: extract artifact
+    become: yes
+    unarchive:
+      src: ~/project/.circleci/ansible/roles/deploy/files/artifact.tar.gz
+      dest: .
 
-- name: start app
-  become: yes
-  shell: |
-    pm2 delete all
-    pm2 start npm -- start
+  - name: start app
+    become: yes
+    shell: |
+      pm2 stop all
+      pm2 start npm -- start
