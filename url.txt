@@ -1,2 +1,2 @@
 git url : https://github.com/toluwalase09/cdond-c3-projectstarter.git 
-URLO2   : s3bucket
+URLO2   : http://udapeople-0413e05.s3-website-us-east-1.amazonaws.com/
