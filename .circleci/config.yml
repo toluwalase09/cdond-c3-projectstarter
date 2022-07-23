@@ -198,8 +198,6 @@ jobs:
     docker:
       - image: python:3.7-alpine3.11
     steps:
-      - run: apk add --update tar
-      - run: apk add --update gzip
       - checkout
       - add_ssh_keys:
           fingerprints: ["0c:f2:9e:c8:e1:4f:07:82:1c:79:76:e9:13:53:92:bf"]
@@ -208,6 +206,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
+            apk add --update tar
+            apk add --update gzip
             apk add --update ansible
             pip install awscli
             aws --version
