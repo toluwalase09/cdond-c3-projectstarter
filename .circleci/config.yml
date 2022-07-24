@@ -88,9 +88,9 @@ jobs:
             cd frontend
             npm install
             npm run test
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-test
+      # - save_cache:
+      #     paths: [frontend/node_modules]
+      #     key: frontend-test
 
   test-backend:
     docker:
@@ -105,9 +105,9 @@ jobs:
             cd backend
             npm install
             npm run test
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-test
+      # - save_cache:
+      #     paths: [backend/node_modules]
+      #     key: backend-test
             
   scan-frontend:
      docker:
@@ -115,7 +115,7 @@ jobs:
      steps:
       - checkout
       - restore_cache:
-          keys: [frontend-analysis]
+          keys: [frontend-build]
       - run:
           name: frontend analysis
           command: |
@@ -124,9 +124,9 @@ jobs:
             # npm install oauth-sign@^0.9.0
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
-      - save_cache:
-          paths: [frontend/node_modules]
-          key: frontend-analysis
+      # - save_cache:
+      #     paths: [frontend/node_modules]
+      #     key: frontend-analysis
 
   scan-backend:
      docker:
@@ -144,9 +144,9 @@ jobs:
             npm audit fix --force
             # npm install oauth-sign@^0.9.0
             npm audit --audit-level=critical
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-analysis
+      # - save_cache:
+      #     paths: [backend/node_modules]
+      #     key: backend-analysis
       # - slack/notify:
       #     channel: general
       #     event: fail
@@ -197,7 +197,9 @@ jobs:
   configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11
-    steps:
+    SecurityGroups:
+      - run:  apk add --update tar
+      - run:  apk add --update gzip    
       - checkout
       - add_ssh_keys:
           fingerprints: ["0c:f2:9e:c8:e1:4f:07:82:1c:79:76:e9:13:53:92:bf"]
@@ -206,8 +208,6 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update tar
-            apk add --update gzip
             apk add --update ansible
             pip install awscli
             aws --version
