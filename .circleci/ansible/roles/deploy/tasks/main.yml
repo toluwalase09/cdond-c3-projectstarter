@@ -33,6 +33,5 @@
   - name: start app
     become: true
     shell: |
-      npm install
-      pm2 stop defailt
+      pm2 stop all
       pm2 start npm -- start
