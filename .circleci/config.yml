@@ -68,9 +68,11 @@ jobs:
       - run:
           name: Back-end build
           command: |
-            cd backend
-            npm install
-            npm run build
+             # Your code here
+             cd backend
+             npm install
+             npm run build
+             # exit 1
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -296,6 +298,8 @@ jobs:
           fingerprints: ["0c:f2:9e:c8:e1:4f:07:82:1c:79:76:e9:13:53:92:bf"]
       - attach_workspace:
           at: ~/
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Install dependencies
           command: |
