@@ -296,10 +296,10 @@ jobs:
           fingerprints: ["0c:f2:9e:c8:e1:4f:07:82:1c:79:76:e9:13:53:92:bf"]
       - attach_workspace:
           at: ~/
-     - run:
-        name: Install dependencies
-        command: |
-          apk add --update --no-cache tar gzip nodejs npm tree aws-cli ansible curl rsync openssh
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update --no-cache tar gzip nodejs npm tree aws-cli ansible curl rsync openssh
       - run:
           name: Deploy backend
           command: |
