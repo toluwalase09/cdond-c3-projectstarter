@@ -1,6 +1,5 @@
 git url : https://github.com/toluwalase09/cdond-c3-projectstarter.git 
-URLO2   : http://http://udapeople-acbb453.s3-website-us-east-1.amazonaws.com/#/employees/new
+URLO2   : http://udapeople-0c2a2af.s3-website-us-east-1.amazonaws.com
 
 
 
-i cant add users ..
