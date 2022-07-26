@@ -240,8 +240,8 @@ jobs:
             cd backend
             npm install
             npm run build
-            npm run migrations >> migrations_dump.txt
-            cat migrations_dump.txt
+            npm run migrations >> migrations.txt
+            cat migrations.txt
             #exit 1
       - run:
           name: Send migration results to kvdb
