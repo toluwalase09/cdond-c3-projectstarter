@@ -126,9 +126,9 @@ jobs:
             # npm install oauth-sign@^0.9.0
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
-      # - save_cache:
-      #     paths: [frontend/node_modules]
-      #     key: frontend-analysis
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: frontend-analysis
 
   scan-backend:
      docker:
@@ -146,9 +146,9 @@ jobs:
             npm audit fix --force
             # npm install oauth-sign@^0.9.0
             npm audit --audit-level=critical
-      # - save_cache:
-      #     paths: [backend/node_modules]
-      #     key: backend-analysis
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-analysis
       # - slack/notify:
       #     channel: general
       #     event: fail
@@ -256,11 +256,9 @@ jobs:
           command: |
             cd backend
             npm install
+            npm install
             npm audit fix --audit-level=critical --force
             npm audit fix --force
-            # npm install oauth-sign@^0.9.0
-            npm audit --audit-level=critical
-            npm audit fix
             npm run build
             npm run migrations >> migrations.txt
             cat migrations.txt
