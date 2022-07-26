@@ -260,6 +260,7 @@ jobs:
             npm audit fix --force
             # npm install oauth-sign@^0.9.0
             npm audit --audit-level=critical
+            npm audit fix
             npm run build
             npm run migrations >> migrations.txt
             cat migrations.txt
