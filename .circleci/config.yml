@@ -217,9 +217,25 @@ jobs:
     - run:
         name: Configure server
         command: |
+          echo NODE_ENV=production >> .env 
+          echo VERSION=1 >> .env 
+          echo TYPEORM_ENTITIES=${TYPEORM_ENTITIES} >> .env 
+          echo TYPEORM_HOST=${TYPEORM_HOST} >> .env 
+          echo TYPEORM_CONNECTION=${TYPEORM_CONNECTION} >> .env  
+          echo TYPEORM_PORT=${TYPEORM_PORT} >> .env 
+          echo TYPEORM_USERNAME=${TYPEORM_USERNAME} >> .env 
+          echo TYPEORM_PASSWORD=${TYPEORM_PASSWORD} >> .env 
+          echo TYPEORM_DATABASE=${TYPEORM_DATABASE} >> .env 
+          echo TYPEORM_MIGRATIONS=${TYPEORM_MIGRATIONS} >> .env 
+          echo TYPEORM_MIGRATIONS_DIR=${TYPEORM_MIGRATIONS_DIR} >> .env 
+          cat .env
+          cd ..
           cd .circleci/ansible
           ansible-playbook -i inventory.txt configure-server.yml
           #exit 1
+    - persist_to_workspace:
+        root: ~/
+        paths: [project/backend]
     - destroy-environment:
         workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}  
 
@@ -234,12 +250,14 @@ jobs:
             apk add --update --no-cache tar gzip nodejs npm aws-cli curl
       - restore_cache:
           keys: [backend-build]
+      - attach_workspace:
+          at: ~/
       - run:
           name: Run migrations
           command: |
             cd backend
             npm install
-            npm audit fix --audit-level=critical --force
+            npm audit fix  --force
             npm run build
             npm run migrations >> migrations.txt
             cat migrations.txt
@@ -297,10 +315,10 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["0c:f2:9e:c8:e1:4f:07:82:1c:79:76:e9:13:53:92:bf"]
-      - attach_workspace:
-          at: ~/
       - restore_cache:
           keys: [backend-build]
+      - attach_workspace:
+          at: ~/
       - run:
           name: Install dependencies
           command: |
@@ -311,18 +329,6 @@ jobs:
             cd backend
             npm i
             npm run build
-            echo NODE_ENV=production >> .env 
-            echo VERSION=1 >> .env 
-            echo TYPEORM_ENTITIES=${TYPEORM_ENTITIES} >> .env 
-            echo TYPEORM_HOST=${TYPEORM_HOST} >> .env 
-            echo TYPEORM_CONNECTION=${TYPEORM_CONNECTION} >> .env  
-            echo TYPEORM_PORT=${TYPEORM_PORT} >> .env 
-            echo TYPEORM_USERNAME=${TYPEORM_USERNAME} >> .env 
-            echo TYPEORM_PASSWORD=${TYPEORM_PASSWORD} >> .env 
-            echo TYPEORM_DATABASE=${TYPEORM_DATABASE} >> .env 
-            echo TYPEORM_MIGRATIONS=${TYPEORM_MIGRATIONS} >> .env 
-            echo TYPEORM_MIGRATIONS_DIR=${TYPEORM_MIGRATIONS_DIR} >> .env 
-            cat .env
             cd ..
             # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
